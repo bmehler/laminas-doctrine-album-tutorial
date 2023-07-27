@@ -2,8 +2,9 @@
 
 Dies ist ein Laminas MVC Tutorial. Derzeit arbeite ich mich in das Laminas PHP Framework ein und möchte meine Erkenntnisse hier in einem Tutorial zusammenfassen.
 
-Das Tutorial richtet sich nach der Laminas Album Applikation. Diese findet ihr [hier](https://docs.laminas.dev/tutorials/getting-started/overview/)
-Bei diesem Tutorial möchte ich jedoch Doctrine ORM als Object Relationship Mapper für die Kommunikation mit der Datenbank verwenden.
+Das Tutorial richtet sich nach der [Laminas Album Applikation](https://docs.laminas.dev/tutorials/getting-started/overview/).
+
+Bei diesem Tutorial möchte ich jedoch Doctrine ORM als Object Relationship Mapper für die Kommunikation zwischen der Entity und der Datenbank verwenden.
 
 Die Dokumentation zu Doctrine für Laminas findet ihr [hier](https://www.doctrine-project.org/projects/doctrine-orm-module/en/5.3/index.html)
 
