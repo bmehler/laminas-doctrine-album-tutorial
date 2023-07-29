@@ -226,7 +226,7 @@ php vendor/bin/doctrine-module orm:schema-tool:create
 ```
 sollte der Fehler nicht mehr auftauchen.
 
-Mit dem Befehl:
+Mit diesem Befehl könnt ihr euch zuerst das SQL ausgeben lassen:
 ```bash
 php vendor/bin/doctrine-module orm:schema-tool:create --dump-sql
 
