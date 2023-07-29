@@ -23,6 +23,9 @@ cd laminas-doctrine
 composer require doctrine/doctrine-orm-module
 composer require doctrine/doctrine-module
 composer require doctrine/annotations
+composer require doctrine/annotations
+composer require laminas/laminas-i18n
+composer require doctrine/persistence
 ```
 Nun steht die Konfiguration in Laminas an. Dies geht wie folgt:
 ```php
@@ -64,7 +67,7 @@ Da ich hier mit Doctrine arbeite ändert sich der Aufbau ein wenig (siehe Entity
             /config
                  module.config.php
             /src
-                /Album/Enitiy/Album.php
+                /Enitiy/Album.php
                 /Controller
                 /Form
                 Module.php
@@ -80,19 +83,16 @@ Diese Datei sollte folgendes beinhalten und führt die Configuration der Entity 
 ```php
 <?php
 
+<?php
+namespace Album;
+
+use Laminas\Router\Http\Segment;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\Mapping\Driver\DriverChain;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 
 return [
-     'controllers' => [
-        'factories' => [
-            Controller\AlbumController::class => InvokableFactory::class,
-        ],
-    ],
-    'view_manager' => [
-        'template_path_stack' => [
-            'album' => __DIR__ . '/../view',
-        ],
-    ],
     'doctrine' => [
         'driver' => [
             // defines an annotation driver with two paths, and names it `my_annotation_driver`
@@ -100,18 +100,48 @@ return [
                 'class' => AnnotationDriver::class,
                 'cache' => 'array',
                 'paths' => [
-                    __DIR__ . '/../src/Album/Entity'
+                    __DIR__ . '/../src/Entity'
                 ],
             ],
 
             // default metadata driver, aggregates all other drivers into a single one.
             // Override `orm_default` only if you know what you're doing
             'orm_default' => [
+                'class'   => DriverChain::class,
                 'drivers' => [
                     // register `my_annotation_driver` for any entity under namespace `My\Namespace`
                     'Album\Entity' =>  'Album_driver'
                 ],
             ],
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+            Controller\AlbumController::class => ReflectionBasedAbstractFactory::class,
+        ],
+    ],
+     // The following section is new and should be added to your file:
+    'router' => [
+        'routes' => [
+            'album' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route' => '/album[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\AlbumController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'view_manager' => [
+        'template_path_stack' => [
+            'album' => __DIR__ . '/../view',
         ],
     ],
 ];
@@ -120,7 +150,7 @@ return [
 ## Die Album Entity
 Wir legen eine Entity Album an. Siehe oben liegt die Datei in:
 ```php
-module/Album/src/Album/Entity/Album.php
+module/Album/src/Entity/Album.php
 
 <?php
 
@@ -141,16 +171,40 @@ class Album
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
-    private $id;
+    public $id;
     /**
      * @ORM\Column(name="artist", type="string", length=50, nullable=true)
      */
-    private $artist;
+    public $artist;
      /**
      * @ORM\Column(name="title", type="string", length=50, nullable=true)
      */
-    private $title;
+    public $title;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function getArtist(): ?string
+    {
+        return $this->artist;
+    }
+
+    public function setArtist(string $artist): void
+    {
+        $this->artist = $artist;
+    }
 }
 ```
 
@@ -162,10 +216,16 @@ Ihr erhaltet eine Liste mit den möglichen Befehlen zu Doctrine wie folgt:
 ```bash
  php vendor/bin/doctrine-module list
 ```
-Nun könnt ihr überprüfen, ob das Mapping und das Datenbank Schema ordnungsgemäß gesynct wurden.
+Nun könnt ihr überprüfen, ob das Mapping und das Datenbank Schema ordnungsgemäß gesynct wurden. Hier sollte ein Fehler erscheinen.
 ```bash
 php vendor/bin/doctrine-module orm:validate-schema
 ```
+Nachdem ihr
+```bash
+php vendor/bin/doctrine-module orm:schema-tool:create
+```
+sollte der Fehler nicht mehr auftauchen.
+
 Mit dem Befehl:
 ```bash
 php vendor/bin/doctrine-module orm:schema-tool:create --dump-sql
@@ -173,8 +233,3 @@ php vendor/bin/doctrine-module orm:schema-tool:create --dump-sql
 CREATE TABLE album (id INT AUTO_INCREMENT NOT NULL, artist VARCHAR(50) DEFAULT NULL, title VARCHAR(50) DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB;
 ```
 könnt ihr euch den SQL Code anzeigen lassen, welcher die Tabelle album in der Datenbank anlegt. Dies dient lediglich der Vorschau.
-
-Wenn das alles geklappt hat, könnt ihr das Datenbank Schema anlegen:
-```bash
-php vendor/bin/doctrine-module orm:schema-tool:create
-```
