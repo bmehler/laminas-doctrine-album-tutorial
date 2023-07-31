@@ -474,12 +474,6 @@ class CreateAlbumForm extends Form
         $albumFieldset = new AlbumFormFieldset($objectManager);
         $albumFieldset->setUseAsBaseFieldset(true);
         $this->add($albumFieldset);
-
-        //echo print_r($objectManager);
-
-        // … add CSRF and submit elements …
-
-        // Optionally set your validation group here
     }
 }
 ```
@@ -509,10 +503,6 @@ class EditAlbumForm extends Form
         $albumFieldset = new AlbumFormFieldset($objectManager);
         $albumFieldset->setUseAsBaseFieldset(true);
         $this->add($albumFieldset);
-
-        // … add CSRF and submit elements …
-
-        // Optionally set your validation group here
     }
 }
 ```
