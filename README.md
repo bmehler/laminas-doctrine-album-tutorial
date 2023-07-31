@@ -289,7 +289,6 @@ class AlbumController extends AbstractActionController
         $form->setData($this->request->getPost());
 
         if ($form->isValid()) {
-            echo print_r($album);
             $this->entityManager->persist($album);
             $this->entityManager->flush();
             return $this->redirect()->toRoute('album');
