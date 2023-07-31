@@ -516,3 +516,172 @@ class EditAlbumForm extends Form
     }
 }
 ```
+
+## Views
+
+### Index View
+
+```bash
+module/Album/src/view/album/album/index.phtml
+```
+```php
+<?php
+$title = 'My albums';
+$this->headTitle($title);
+?>
+<h1><?= $this->escapeHtml($title) ?></h1>
+<p>
+    <a href="<?= $this->url('album', ['action' => 'add']) ?>">Add new album</a>
+</p>
+
+<table class="table">
+<tr>
+    <th>Title</th>
+    <th>Artist</th>
+    <th>&nbsp;</th>
+</tr>
+<?php foreach($albums as $album): ?>
+ <tr>
+        <td><?= $this->escapeHtml($album->title) ?></td>
+        <td><?= $this->escapeHtml($album->artist) ?></td>
+        <td>
+            <a href="<?= $this->url('album', ['action' => 'edit', 'id' => $album->id]) ?>">Edit</a>
+            <a href="<?= $this->url('album', ['action' => 'delete', 'id' => $album->id]) ?>">Delete</a>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</table>
+```
+### Add View
+```bash
+module/Album/src/view/album/album/add.phtml
+```
+#### Hinweis
+Die Feldwerte bekommnt man mit (Modul und Entity):
+```bash
+$form->get('album')->get("title");
+```
+```php
+<?php
+$title = 'Add new album';
+$this->headTitle($title);
+?>
+<h1><?= $this->escapeHtml($title) ?></h1>
+<?php
+
+$form = $this->form;
+
+$title = $form->get('album')->get("title");
+$title->setAttribute('class', 'form-control');
+$title->setAttribute('placeholder', 'Album title');
+
+$artist = $form->get('album')->get('artist');
+$artist->setAttribute('class', 'form-control');
+$artist->setAttribute('placeholder', 'Artist');
+
+$submit =$form->get('album')->get('submit');
+$submit->setAttribute('class', 'btn btn-primary');
+
+$form->setAttribute('action', $this->url('album', ['action' => 'add']));
+$form->prepare();
+
+echo $this->form()->openTag($form); ?>
+
+<div class="form-group">
+    <?= $this->formLabel($title) ?>
+    <?= $this->formElement($title) ?>
+    <?= $this->formElementErrors($title); ?>
+</div>
+
+<div class="form-group">
+    <?= $this->formLabel($artist) ?>
+    <?= $this->formElement($artist) ?>
+    <?= $this->formElementErrors($artist); ?>
+</div>
+
+<?php
+echo $this->formSubmit($submit);
+echo $this->formHidden($form->get('album')->get("id"));
+echo $this->form()->closeTag();
+?>
+```
+
+### Edit View
+```bash
+module/Album/src/view/album/album/edit.phtml
+```
+```php
+<?php
+$title = 'Edit album';
+$this->headTitle($title);
+?>
+<h1><?= $this->escapeHtml($title) ?></h1>
+<?php
+
+$form = $this->form;
+
+$title = $form->get('album')->get("title");
+$title->setAttribute('class', 'form-control');
+$title->setAttribute('placeholder', 'Album title');
+
+$artist = $form->get('album')->get('artist');
+$artist->setAttribute('class', 'form-control');
+$artist->setAttribute('placeholder', 'Artist');
+
+$submit =$form->get('album')->get('submit');
+$submit->setAttribute('class', 'btn btn-primary');
+
+$form->setAttribute('action', $this->url('album', [
+    'action' => 'edit',
+    'id'     => $id,
+]));
+
+$form->prepare();
+
+echo $this->form()->openTag($form); ?>
+
+<div class="form-group">
+    <?= $this->formLabel($title) ?>
+    <?= $this->formElement($title) ?>
+    <?= $this->formElementErrors($title); ?>
+</div>
+
+<div class="form-group">
+    <?= $this->formLabel($artist) ?>
+    <?= $this->formElement($artist) ?>
+    <?= $this->formElementErrors($title); ?>
+</div>
+
+<?php
+echo $this->formSubmit($submit);
+echo $this->formHidden($form->get('album')->get("id"));
+echo $this->form()->closeTag();
+?>
+```
+### Delete View
+```bash
+module/Album/src/view/album/album/delete.phtml
+```
+```php
+<?php
+$title = 'Delete album';
+$url   = $this->url('album', ['action' => 'delete', 'id' => $id]);
+
+$this->headTitle($title);
+?>
+<h1><?= $this->escapeHtml($title) ?></h1>
+
+<p>
+    Are you sure that you want to delete
+    "<?= $this->escapeHtml($album->title) ?>" by
+    "<?= $this->escapeHtml($album->artist) ?>"?
+</p>
+
+<form action="<?= $url ?>" method="post">
+<div class="form-group">
+    <input type="hidden" name="id" value="<?= (int) $album->id ?>" />
+    <input type="submit" class="btn btn-danger" name="del" value="Yes" />
+    <input type="submit" class="btn btn-success" name="del" value="No" />
+</div>
+</form>
+```
