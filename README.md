@@ -23,7 +23,6 @@ cd laminas-doctrine
 composer require doctrine/doctrine-orm-module
 composer require doctrine/doctrine-module
 composer require doctrine/annotations
-composer require doctrine/annotations
 composer require laminas/laminas-i18n
 composer require doctrine/persistence
 ```
