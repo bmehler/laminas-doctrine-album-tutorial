@@ -73,6 +73,12 @@ Da ich hier mit Doctrine arbeite ändert sich der Aufbau ein wenig (siehe Entity
             /view
 ```
 
+Hierbei ist der Pfad  ist. Also src und dann Entity. Sonst bekommt man den Fehler "Class does not exit".
+
+```bash
+module/Album/src/Entity/Album.php
+```
+
 Die weiteren Schritte könnt ihr der [Laminas Dokumentation](https://docs.laminas.dev/tutorials/getting-started/modules/) entnehmen.
 
 ## Die ORM Configuration im Module
