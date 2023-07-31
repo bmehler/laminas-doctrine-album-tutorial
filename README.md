@@ -422,8 +422,8 @@ class AlbumFormFieldset extends Fieldset implements InputFilterProviderInterface
                     [
                         'name' => Validator\StringLength::class,
                         'options' => [
-                            'min' => 3,
-                            'max' => 256
+                            'min' => 2,
+                            'max' => 50
                         ],
                     ],
                 ],
@@ -437,8 +437,8 @@ class AlbumFormFieldset extends Fieldset implements InputFilterProviderInterface
                     [
                         'name' => Validator\StringLength::class,
                         'options' => [
-                            'min' => 3,
-                            'max' => 256,
+                            'min' => 2,
+                            'max' => 50,
                         ],
                     ],
                 ],
